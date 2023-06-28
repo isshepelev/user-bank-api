@@ -10,7 +10,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class ResponseApi {
-    private JsonNode openConnection() throws IOException {
+    public JsonNode openConnection() throws IOException {
         URL url = new URL("https://www.cbr-xml-daily.ru/daily_json.js");
         StringBuilder response = new StringBuilder();
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
