@@ -21,7 +21,7 @@ public class UserService {
     }
 
     public User findByOneUser(Long id) {
-        return repository.findById(id).orElse(null);
+        return repository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
     }
 
     public User create(User user) {
