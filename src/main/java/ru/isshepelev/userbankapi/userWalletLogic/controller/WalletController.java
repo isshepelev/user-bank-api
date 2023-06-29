@@ -52,4 +52,11 @@ public class WalletController {
             }
         }
     }
+
+    @PutMapping("/wallet/{walletId}")
+    public void updateWallet(@PathVariable("walletId") Long id, @RequestBody Wallet wallet) {
+        walletService.updateWallet(wallet, id);
+
+    }
+
 }
