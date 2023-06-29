@@ -31,7 +31,8 @@ public class CurrencyApiHandler {
     }
 
     public BigDecimal transferCurrency(String charCode1, String charCode2) throws IOException {
-        Map<String,Double> currency = new HashMap<>();
+        Map<String, Double> currency = new HashMap<>();
+        Map<String, Integer> currencyNominal = new HashMap<>();
         ObjectMapper objectMapper = new ObjectMapper();
         BigDecimal valueCharCode1 = BigDecimal.ZERO;
         BigDecimal valueCharCode2 = BigDecimal.ZERO;
@@ -40,17 +41,21 @@ public class CurrencyApiHandler {
 
         for (JsonNode node : valuteNode) {
             String currencyCode = node.get("CharCode").asText();
+            Integer nominalCode = node.get("Nominal").asInt();
             Double valueCode = node.get("Value").asDouble();
-            currency.put(currencyCode,valueCode);
+            currency.put(currencyCode, valueCode);
+            currencyNominal.put(currencyCode, nominalCode);
         }
 
 
-        for (String key : currency.keySet()){
-            if (charCode1.equals(key)){
-                valueCharCode1 = BigDecimal.valueOf(currency.get(key));
+        for (String key : currency.keySet()) {
+            if (charCode1.equals(key)) {
+                int nominal = currencyNominal.get(key);
+                valueCharCode1 = BigDecimal.valueOf(currency.get(key)).divide(BigDecimal.valueOf(nominal));
             }
-            if (charCode2.equals(key)){
-                valueCharCode2 = BigDecimal.valueOf(currency.get(key));
+            if (charCode2.equals(key)) {
+                int nominal = currencyNominal.get(key);
+                valueCharCode2 = BigDecimal.valueOf(currency.get(key)).divide(BigDecimal.valueOf(nominal));
             }
         }
 
