@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.*;
 
 public class CurrencyApiHandler {
     ResponseApi response = new ResponseApi();
@@ -28,5 +28,37 @@ public class CurrencyApiHandler {
             valute.add(currencyCode);
         }
         return valute;
+    }
+
+    public BigDecimal transferCurrency(String charCode1, String charCode2) throws IOException {
+        Map<String,Double> currency = new HashMap<>();
+        ObjectMapper objectMapper = new ObjectMapper();
+        BigDecimal valueCharCode1 = BigDecimal.ZERO;
+        BigDecimal valueCharCode2 = BigDecimal.ZERO;
+        JsonNode rootNode = objectMapper.readTree(response.openConnection().traverse());
+        JsonNode valuteNode = rootNode.get("Valute");
+
+        for (JsonNode node : valuteNode) {
+            String currencyCode = node.get("CharCode").asText();
+            Double valueCode = node.get("Value").asDouble();
+            currency.put(currencyCode,valueCode);
+        }
+
+
+        for (String key : currency.keySet()){
+            if (charCode1.equals(key)){
+                valueCharCode1 = BigDecimal.valueOf(currency.get(key));
+            }
+            if (charCode2.equals(key)){
+                valueCharCode2 = BigDecimal.valueOf(currency.get(key));
+            }
+        }
+
+
+        if (valueCharCode1.compareTo(BigDecimal.ZERO) != 0 && valueCharCode2.compareTo(BigDecimal.ZERO) != 0) {
+            BigDecimal result = valueCharCode1.divide(valueCharCode2, RoundingMode.HALF_DOWN);
+            return result;
+        }
+        return null;
     }
 }
