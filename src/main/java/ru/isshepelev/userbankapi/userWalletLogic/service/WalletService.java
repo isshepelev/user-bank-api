@@ -29,11 +29,27 @@ public class WalletService {
             repository.save(existingWallet);
         }
     }
+
     public Optional<Wallet> findById(Long id) {
         return repository.findById(id);
     }
 
     public void delete(Long id) {
         repository.deleteById(id);
+    }
+
+    public void updateMoney(BigDecimal senderMoney, BigDecimal recipientMoney, Long senderId, Long recipientId) {
+        Optional<Wallet> optionalWalletSender = repository.findById(senderId);
+        Optional<Wallet> optionalWalletRecipient = repository.findById(recipientId);
+        if (optionalWalletSender.isPresent() && optionalWalletRecipient.isPresent()) {
+            Wallet walletSender = optionalWalletSender.get();
+            Wallet walletRecipient = optionalWalletRecipient.get();
+
+            walletSender.setMoney(senderMoney);
+            walletRecipient.setMoney(recipientMoney);
+
+            repository.save(walletSender);
+            repository.save(walletRecipient);
+        }
     }
 }
